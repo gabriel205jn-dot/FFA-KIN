@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>FFA-KIN</title>
+<style>
+body { margin:0; background:#111; overflow:hidden; }
+canvas { background:#222; display:block; margin:auto; }
+</style>
+</head>
+<body>
+
+<canvas id="gameCanvas" width="500" height="500"></canvas>
+
+<script>
+const canvas = document.getElementById("gameCanvas");
+const ctx = canvas.getContext("2d");
+
+let player = { x: 250, y: 250, size: 15, speed: 4 };
+let bullets = [];
+let enemies = [];
+let score = 0;
+
+function spawnEnemy(){
+    enemies.push({
+        x: Math.random() * canvas.width,
+        y: 0,
+        size: 15,
+        speed: 1 + Math.random()
+    });
+}
+
+function shoot(){
+    bullets.push({ x: player.x + 5, y: player.y, size:5, speed:7 });
+}
+
+document.addEventListener("keydown", (e)=>{
+    if(e.key==="w") player.y -= player.speed;
+    if(e.key==="s") player.y += player.speed;
+    if(e.key==="a") player.x -= player.speed;
+    if(e.key==="d") player.x += player.speed;
+    if(e.key===" ") shoot();
+});
+
+function update(){
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+
+    ctx.fillStyle="lime";
+    ctx.fillRect(player.x, player.y, player.size, player.size);
+
+    ctx.fillStyle="red";
+    enemies.forEach(e=>{
+        e.y += e.speed;
+        ctx.fillRect(e.x, e.y, e.size, e.size);
+    });
+
+    ctx.fillStyle="yellow";
+    bullets.forEach(b=>{
+        b.y -= b.speed;
+        ctx.fillRect(b.x, b.y, b.size, b.size);
+    });
+
+    ctx.fillStyle="white";
+    ctx.fillText("Score: "+score,10,20);
+
+    requestAnimationFrame(update);
+}
+
+setInterval(spawnEnemy,2000);
+update();
+</script>
+
+</body>
+</html>
